@@ -1,12 +1,12 @@
 terraform {
   required_providers {
-    lxd = {
-      source = "terraform-lxd/lxd"
+    incus = {
+      source = "lxc/incus"
     }
   }
 }
 
-provider "lxd" {
+provider "incus" {
   generate_client_certificates = true
   accept_remote_certificate    = true
 }
@@ -24,10 +24,10 @@ variable "instance_names" {
   ]
 }
 
-resource "lxd_instance" "kube" {
+resource "incus_instance" "kube" {
   count     = length(var.instance_names)
   name      = var.instance_names[count.index]
-  image     = "ubuntu:22.04"
+  image     = "images:ubuntu/22.04/cloud"
   type      = "virtual-machine"
   ephemeral = false
 
