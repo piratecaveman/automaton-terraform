@@ -1,3 +1,5 @@
+# Plugin used: https://registry.terraform.io/providers/lxc/incus/latest/docs
+
 terraform {
   required_providers {
     incus = {
