@@ -26,6 +26,22 @@ variable "instance_names" {
   ]
 }
 
+resource "incus_storage_pool" "kubepool" {
+  name   = "kubepool"
+  driver = "dir"
+}
+
+resource "incus_volume" "cephfs" {
+  count        = length(var.instance_names)
+  name         = "${var.instance_names[count.index]}-vol"
+  pool         = incus_storage_pool.kubepool.name
+  content_type = "block"
+  config = {
+    size = "10GB"
+  }
+
+}
+
 resource "incus_instance" "kube" {
   count     = length(var.instance_names)
   name      = var.instance_names[count.index]
@@ -35,6 +51,15 @@ resource "incus_instance" "kube" {
 
   config = {
     "boot.autostart" = true
+  }
+
+  device {
+    type = "disk"
+    name = "${var.instance_names[count.index]}-vol"
+    properties = {
+      pool   = incus_storage_pool.kubepool.name
+      source = "${var.instance_names[count.index]}-vol"
+    }
   }
 
   limits = {
