@@ -37,7 +37,8 @@ resource "incus_volume" "cephfs" {
   pool         = incus_storage_pool.kubepool.name
   content_type = "block"
   config = {
-    size = "10GB"
+    "size"            = "10GB"
+    "security.shared" = true
   }
 
 }
